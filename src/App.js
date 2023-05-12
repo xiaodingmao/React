@@ -74,20 +74,21 @@ function calculateWinner(squares) {
 
 export default function Game(){
   const [history,setHistory] = useState([Array(9).fill(null)]);
-  const [xNext, setXNext] =useState(true);
+  //const [xNext, setXNext] =useState(true);
   const [currentMove, setCurrentMove] = useState(0);
+  const xNext = currentMove % 2 === 0;
   const currentSquare = history[currentMove];
   console.log('ccc',currentSquare)
 
   function handlePlay(newSquare){
     const nextHistory = [...history.slice(0, currentMove + 1), newSquare];
     setHistory(nextHistory);
-    setXNext(!xNext);
+    //setXNext(!xNext);
     setCurrentMove(nextHistory.length-1);
   }
   function jumpTo(nextMove){
     setCurrentMove(nextMove);
-    setXNext(nextMove %2 ===0);
+    //setXNext(nextMove %2 ===0);
   }
   
   const moves = history.map((square,move) => {
