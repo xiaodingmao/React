@@ -17,7 +17,7 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6]
   ];
-  console.log(squares)
+  // console.log(squares)
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -56,28 +56,17 @@ function Board({ xNext, squares, onplay }) {
     const board = [];
     const len = squares.length;
     console.log("ll", len)
-    for (let i = 0; i < len; i=i+3) {
-      console.log(i, len);
+    for (let i = 0; i < len; i = i + 3) {
+      //console.log(i, len);
       const rowSquare = [];
-      for (let j = i; j < i+3; j++) {
-        console.log("jj",j)
-        rowSquare.push(<Square value={squares[j]} onSquareClick={() => handleClick(j)}></Square>);
+      for (let j = i; j < i + 3; j++) {
+        //console.log("jj",j)
+        rowSquare.push(<Square key={j} value={squares[j]} onSquareClick={() => handleClick(j)}></Square>);
       }
-      board.push(<div className="board-row">{rowSquare}</div>);
+      board.push(<div className="board-row" key={i}>{rowSquare}</div>);
     }
+   // console.log(board);
     return board;
-  }
-  const board = [];
-  const len = squares.length;
-  console.log("ll", len)
-  for (let i = 0; i < len; i = i + 3) {
-    console.log(i, len);
-    const rowSquare = [];
-    for (let j = i; j < i + 3; j++) {
-      console.log("jj", j)
-      rowSquare.push(<Square value={squares[j]} onSquareClick={() => handleClick(j)}></Square>);
-    }
-    board.push(<div className="board-row">{rowSquare}</div>);
   }
   return (
     <React.Fragment>
@@ -93,12 +82,13 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0);
   const xNext = currentMove % 2 === 0;
   const currentSquare = history[currentMove];
-  console.log('ccc', currentSquare)
+  const [sortAscending, setSortAscending] = useState(true);
 
   function handlePlay(newSquare) {
     const nextHistory = [...history.slice(0, currentMove + 1), newSquare];
     setHistory(nextHistory);
     //setXNext(!xNext);
+    setMoves([...getMoves(history)]);
     setCurrentMove(nextHistory.length - 1);
   }
   function jumpTo(nextMove) {
@@ -106,29 +96,54 @@ export default function Game() {
     //setXNext(nextMove %2 ===0);
   }
 
-  const moves = history.map((square, move) => {
-    let description;
-    if (move <= 0) {
-      description = 'Go to game start';
-    } else if (move === currentMove) {
-      description = 'You are at move #' + move;
-    } else {
-      description = 'Go to move #' + move;
-    }
-    return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    )
-  });
-  //console.log('mm',moves)
+  const [moves, setMoves] = useState([...getMoves(history)]);
+
+  function getMoves(history){
+    return history.map((square, move) => {
+      let description;
+      if (move <= 0) {
+        description = 'Go to game start';
+      } else if (move === currentMove) {
+        description = 'You are at move #' + move;
+      } else {
+        description = 'Go to move #' + move;
+      }
+      return {
+        id: move,
+        name: description
+      }
+
+    });
+
+  }
+  function toggleMoves() {
+    const sortMove = [...moves].sort((a, b) => {
+      if (sortAscending) {
+        return a.id - b.id
+      } else {
+        return b.id - a.id
+      }
+    });
+    setMoves(sortMove);
+    console.log('move', moves)
+
+  }
+  function toggleSortOder() {
+    setSortAscending(!sortAscending);
+  }
   return (
     <div className="game">
       <div className="game-board">
         <Board squares={currentSquare} onplay={handlePlay} xNext={xNext}></Board>
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <button onClick={toggleSortOder}>toggle sort order:{sortAscending ? 'Ascending' : 'Descending'}</button>
+        <button onClick={toggleMoves}>Sort Moves</button>
+        <ol>{moves.map((move) => (
+          <li key={move.id}>
+            <button onClick={() => jumpTo(move.id)}>{move.name}</button>
+          </li>
+        ))}</ol>
       </div>
     </div>
 
