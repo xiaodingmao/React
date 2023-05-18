@@ -70,7 +70,9 @@ body {
   text-align: center;
   width: 34px;
 }
-
+.win{
+  background-color: red;
+}
 .board-row:after {
   clear: both;
   content: '';
