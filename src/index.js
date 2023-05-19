@@ -5,7 +5,8 @@ import "./styles.css";
 import App from "./App";
 
 const root = createRoot(document.getElementById("root"));
-root.render(
+console.log('root',root);
+ root.render(
   <StrictMode>
     <App />
   </StrictMode>
